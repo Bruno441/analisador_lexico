@@ -2,14 +2,14 @@
 
 Tokens
 
-Definir função     | 'fnc'
+| Definir função     | 'fnc' |
 
-Declarar variável  | 'var:'
+| Declarar variável  | 'var:' |
 
-Retorno de função  | 'back'
+| Retorno de função  | 'back' |
 
-Comentário         | '//'
+| Comentário         | '//' |
 
-Condição           | 'si'
+| Condição           | 'si' |
 
-Atribuição         | '->'
+| Atribuição         | '->' |
