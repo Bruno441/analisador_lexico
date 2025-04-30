@@ -1,6 +1,4 @@
-# analisador_lexico
-
-Tokens
+# Linguagem Nexon
 
 | Operação | Elemento | 
 | ---------- | --------- |
