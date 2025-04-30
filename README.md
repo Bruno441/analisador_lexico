@@ -9,3 +9,7 @@ Declarar variável  | 'var:'
 Retorno de função  | 'back'
 
 Comentário         | '//'
+
+Condição           | 'si'
+
+Atribuição         | '->'
