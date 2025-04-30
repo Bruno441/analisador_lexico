@@ -1,12 +1,14 @@
 # Linguagem Nexon
 
-| Operação | Elemento | 
-| ---------- | --------- |
-| Definir função     | 'fnc' |
-| Declarar variável  | 'var:' |
-| Retorno de função  | 'back' |
-| Comentário         | '//' |
-| Condição           | 'si' |
-| Condição | 'velsi' |
-|Condição | 'nisi'|
-| Atribuição         | '->' |
+## Elementos da Sintaxe
+
+| Operação               | Elemento |
+|------------------------|----------|
+| Definir função         | 'fnc'    |
+| Declarar variável      | 'var:'   |
+| Retorno de função      | 'back'   |
+| Comentário             | '//'     |
+| Condição (if)          | 'si'     |
+| Condição (else if)     | 'velsi'  |
+| Condição (else)        | 'nisi'   |
+| Atribuição             | '->'     |
