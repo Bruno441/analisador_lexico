@@ -12,3 +12,8 @@
 | Condição (else if)     | 'velsi'  |
 | Condição (else)        | 'nisi'   |
 | Atribuição             | '->'     |
+| Impressão              | 'Imp'    |
+| Soma                   | '"+"'    |
+| Subtração              | '"-"'    |
+| Multiplicação          | '"*"'    |
+| Divisão                | '"/"'    |
