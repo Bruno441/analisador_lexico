@@ -16,11 +16,14 @@ token_specification = [
     ('ATRIB',        r'->'),                              # Atribuição
     ('OP_REL',       r'==|!=|<=|>=|<|>'),                 # Operadores relacionais
     ('OP_ARIT',      r'\+|-|\*|/'),                       # Operadores aritméticos
-    ('PONTO_VIRG',   r';'),                               # Ponto e vírgula
+    ('PONTO_VIRG',   r';'),                               # ;
+    ('DOIS_PTS',     r':'),                               # :
     ('VIRGULA',      r','),                               # Vírgula
     ('ABRE_PAREN',   r'\('),                              # (
     ('FECHA_PAREN',  r'\)'),                              # )
-    ('PALAVRA_CHAVE', r'\b(fnc|var:|back|si|velsi|nisi|dum|per|Imp|fin)\b'),  # Palavras-chave
+    ('ABRE_CHAVE',   r'\{'),                              # {
+    ('FECHA_CHAVE',  r'\}'),                              # }
+    ('PALAVRA_CHAVE', r'\b(fnc|var:|var: |back|si|velsi|nisi|dum|per|Imp|fin)\b'),  # Palavras-chave
     ('ID',           r'[a-zA-Z_][a-zA-Z0-9_]*'),          # Identificadores
     ('NOVA_LINHA',   r'\n'),                              # Quebra de linha
     ('ESPACO',       r'[ \t]+'),                          # Espaços e tabs
