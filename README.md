@@ -1,3 +1,4 @@
+
 # Documentação da Linguagem Nexon
 
 ## Visão Geral
