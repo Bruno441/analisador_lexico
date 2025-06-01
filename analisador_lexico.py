@@ -27,7 +27,7 @@ TOKEN_SPECIFICATION = [
     ('FECHA_PAREN',  r'\)'),
     ('ABRE_CHAVE',   r'\{'),
     ('FECHA_CHAVE',  r'\}'),
-    ('PALAVRACHAVE', r'\b(fnc|var:|back|si|velsi|nisi|dum|per|Imp|fin)\b'),
+    ('PALAVRACHAVE', r'\b(fnc|var|back|si|velsi|nisi|dum|per|Imp|fin)\b'),
     ('ID',           r'[a-zA-Z][a-zA-Z0-9_]*'), 
     ('NOVA_LINHA',   r'\n'),
     ('ESPACO',       r'[ \t]+'),

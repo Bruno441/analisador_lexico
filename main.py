@@ -24,6 +24,21 @@ def main():
         var: resultado -> soma(x, y);
         Imp resultado;
     }
+
+    fnc mult (a, b) {
+        var: resultado -> a * b;
+        back resultado;
+    }
+
+    Imp mult(5, 3); // Imprime: 15
+
+    var: soma -> 0;
+    var: i -> 1;
+    dum (i <= 10) {
+        soma -> soma + i;
+        i -> i + 1;
+    }
+    Imp soma; // Imprime: 55
     '''
     
     try:

@@ -32,10 +32,21 @@ class Parser:
         while self.token_atual:
             if self.token_atual.valor == 'fnc':
                 self.arvore_sintatica.append(self.funcao())
-            elif self.token_atual.valor == 'var:':
+            elif self.token_atual.valor == 'var':
                 self.arvore_sintatica.append(self.declaracao_variavel())
+            elif self.token_atual.valor == 'Imp':
+                self.arvore_sintatica.append(self.impressao())
+            elif self.token_atual.valor == 'dum':
+                self.arvore_sintatica.append(self.repeticao())
+            elif self.token_atual.tipo == 'ID' and self.verificar_proximo('ATRIB'):
+                self.arvore_sintatica.append(self.atribuicao())
             else:
-                self.erro(f"Declaração inválida iniciada com '{self.token_atual.valor}'")
+                # Permitir chamadas de função no escopo global
+                self.arvore_sintatica.append(self.expressao())
+                if self.token_atual and self.token_atual.tipo == 'PONTO_VIRG':
+                    self.consumir('PONTO_VIRG')
+                else:
+                    self.erro(f"Declaração inválida iniciada com '{self.token_atual.valor}'")
         
         return self.arvore_sintatica
     
@@ -55,12 +66,16 @@ class Parser:
         
         corpo = []
         while self.token_atual and self.token_atual.tipo != 'FECHA_CHAVE':
-            if self.token_atual.valor == 'var:':
+            if self.token_atual.valor == 'var':
                 corpo.append(self.declaracao_variavel())
             elif self.token_atual.valor == 'back':
                 corpo.append(self.retorno())
             elif self.token_atual.valor == 'Imp':
                 corpo.append(self.impressao())
+            elif self.token_atual.valor == 'dum':
+                corpo.append(self.repeticao())
+            elif self.token_atual.tipo == 'ID' and self.verificar_proximo('ATRIB'):
+                corpo.append(self.atribuicao())
             else:
                 corpo.append(self.expressao())
                 if self.token_atual and self.token_atual.tipo == 'PONTO_VIRG':
@@ -77,6 +92,7 @@ class Parser:
     
     def declaracao_variavel(self) -> Dict[str, Any]:
         self.consumir('PALAVRACHAVE')
+        self.consumir('DOIS_PTS')
         nome = self.consumir('ID')
         self.consumir('ATRIB')
         valor = self.expressao()
@@ -108,7 +124,76 @@ class Parser:
             'valor': valor
         }
     
-    def expressao(self) -> Dict[str, Any]:
+    def atribuicao(self) -> dict:
+        identificador = self.consumir('ID')
+        self.consumir('ATRIB')
+        valor = self.expressao()
+        self.consumir('PONTO_VIRG')
+        return {
+            'tipo': 'atribuicao',
+            'variavel': identificador.valor,
+            'valor': valor
+        }
+    
+    def verificar_proximo(self, tipo: str) -> bool:
+        if self.pos + 1 < len(self.tokens):
+            return self.tokens[self.pos + 1].tipo == tipo
+        return False
+    
+    def repeticao(self) -> dict:
+        self.consumir('PALAVRACHAVE')         # Consome a palavra-chave "dum"
+        self.consumir('ABRE_PAREN')           # Consome "("
+        condicao = self.expressao()           # Analisa a expressão condicional
+        self.consumir('FECHA_PAREN')          # Consome ")"
+        self.consumir('ABRE_CHAVE')           # Consome "{"
+
+        corpo = []
+        while self.token_atual and self.token_atual.tipo != 'FECHA_CHAVE':
+            if self.token_atual.valor == 'var':
+                corpo.append(self.declaracao_variavel())
+            elif self.token_atual.valor == 'Imp':
+                corpo.append(self.impressao())
+            elif self.token_atual.valor == 'dum':
+                corpo.append(self.repeticao())  # Permite dum aninhado
+            elif self.token_atual.tipo == 'ID' and self.verificar_proximo('ATRIB'):
+                corpo.append(self.atribuicao())
+            else:
+                self.erro(f"Expressão inválida iniciada com '{self.token_atual.valor}'")
+
+        self.consumir('FECHA_CHAVE')          # Consome "}"
+
+        return {'tipo': 'repeticao', 'condicao': condicao, 'corpo': corpo}
+    
+    def expressao(self) -> dict:
+        return self.expressao_relacional()
+
+    def expressao_relacional(self) -> dict:
+        esquerda = self.expressao_aritmetica()
+        while self.token_atual and self.token_atual.tipo == 'OP_REL':
+            operador = self.consumir('OP_REL')
+            direita = self.expressao_aritmetica()
+            esquerda = {
+                'tipo': 'operacao_relacional',
+                'esquerda': esquerda,
+                'operador': operador.valor,
+                'direita': direita
+            }
+        return esquerda
+
+    def expressao_aritmetica(self) -> dict:
+        esquerda = self.expressao_primaria()
+        while self.token_atual and self.token_atual.tipo == 'OP_ARIT':
+            operador = self.consumir('OP_ARIT')
+            direita = self.expressao_primaria()
+            esquerda = {
+                'tipo': 'operacao_binaria',
+                'esquerda': esquerda,
+                'operador': operador.valor,
+                'direita': direita
+            }
+        return esquerda
+
+    def expressao_primaria(self) -> dict:
         if self.token_atual.tipo == 'INT':
             token = self.consumir('INT')
             return {'tipo': 'literal', 'valor': int(token.valor)}
@@ -120,7 +205,6 @@ class Parser:
             return {'tipo': 'literal', 'valor': token.valor[1:-1]}
         elif self.token_atual.tipo == 'ID':
             nome = self.consumir('ID')
-            
             if self.token_atual and self.token_atual.tipo == 'ABRE_PAREN':
                 self.consumir('ABRE_PAREN')
                 argumentos = []
@@ -129,23 +213,12 @@ class Parser:
                     if self.token_atual and self.token_atual.tipo == 'VIRGULA':
                         self.consumir('VIRGULA')
                 self.consumir('FECHA_PAREN')
-                
                 return {
                     'tipo': 'chamada_funcao',
                     'nome': nome.valor,
                     'argumentos': argumentos
                 }
             else:
-                if self.token_atual and self.token_atual.tipo == 'OP_ARIT':
-                    operador = self.consumir('OP_ARIT')
-                    direita = self.expressao()
-                    return {
-                        'tipo': 'operacao_binaria',
-                        'esquerda': {'tipo': 'variavel', 'nome': nome.valor},
-                        'operador': operador.valor,
-                        'direita': direita
-                    }
-                else:
-                    return {'tipo': 'variavel', 'nome': nome.valor}
+                return {'tipo': 'variavel', 'nome': nome.valor}
         else:
             self.erro(f"Expressão inválida iniciada com '{self.token_atual.valor}'")
