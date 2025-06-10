@@ -242,6 +242,8 @@ class Parser:
             return self.repeticao()
         elif self.token_atual.valor == 'si':
             return self.condicional()
+        elif self.token_atual.valor == 'back':
+            return self.retorno()
         elif self.token_atual.tipo == 'ID' and self.verificar_proximo('ATRIB'):
             return self.atribuicao()
         elif self.token_atual.tipo == 'ID':

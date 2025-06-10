@@ -39,6 +39,16 @@ def main():
         i -> i + 1;
     }
     Imp soma; // Imprime: 55
+
+    var: x -> 7;
+    si (x > 5) {
+        Imp "x maior que 5";
+    } velsi (x == 5) {
+        Imp "x igual a 5";
+    } nisi {
+        Imp "x menor que 5";
+    }
+
     '''
     
     try:
